@@ -55,12 +55,12 @@ func (c *Config) login(idx int) int {
 	initData, err := ioutil.ReadAll(initReq.Body)
 	initReq.Body.Close()
 
-	formData := strings.TrimPrefix(string(initData), "<script>top.self.location.href='http://172.31.252.91:8080/eportal/index.jsp?")
+	formData := strings.TrimPrefix(string(initData), "<script>top.self.location.href='https://172.31.252.91/eportal/index.jsp?")
 	formData = strings.TrimSuffix(formData, "'</script>\r\n")
 	if !strings.HasPrefix(formData, "wlanuserip=") {
 		return LOGIN_SUCCESS
 	}
-	cookieResp, err := http.Get("http://172.31.252.91:8080/eportal/nologin.jsp")
+	cookieResp, err := http.Get("https://172.31.252.91/eportal/nologin.jsp")
 	if err != nil {
 		return ERR_LOGIN_FAILED
 	}
@@ -80,7 +80,7 @@ func (c *Config) login(idx int) int {
 	form.Add("passwordEncrypt", "true")
 
 	client := http.Client{}
-	req, _ := http.NewRequest("POST", "http://172.31.252.91:8080/eportal/InterFace.do?method=login", strings.NewReader(form.Encode()))
+	req, _ := http.NewRequest("POST", "https://172.31.252.91/eportal/InterFace.do?method=login", strings.NewReader(form.Encode()))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
 	req.Header.Add("Cookie", cookie)
 	resp, err := client.Do(req)
