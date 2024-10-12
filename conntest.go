@@ -1,7 +1,7 @@
 package main
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strings"
@@ -9,15 +9,31 @@ import (
 )
 
 func (c *Config) connTest() int {
-	initReq, err := http.Get("http://www.baidu.com")
+	client := &http.Client{
+		Timeout: time.Second * 5, // 设置超时时间为5秒
+	}
+	resp, err := client.Get("http://www.baidu.com")
 	if err != nil {
 		return ERR_TIMEOUT
 	}
-	initData, err := ioutil.ReadAll(initReq.Body)
-	initReq.Body.Close()
-	if strings.HasPrefix(string(initData), "<script>top.self.location.href=") {
+	defer resp.Body.Close()
+
+	// 检查 HTTP 响应状态码
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("Unexpected status code: %d", resp.StatusCode)
+		return ERR_TIMEOUT
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return ERR_TIMEOUT
+	}
+
+	// 检查响应内容
+	if strings.HasPrefix(string(body), "<script>top.self.location.href=") {
 		return NEED_LOGIN
 	}
+
 	return ONLINE
 }
 
