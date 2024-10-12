@@ -38,8 +38,8 @@ jobs:
     - name: Upload wheels
       uses: actions/upload-artifact@v4
       with:
-        name: BUILD
-        path: dist
+        name: ruijie_login
+        path: ./release-windows.zip
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
